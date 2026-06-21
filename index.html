@@ -10,6 +10,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#111827">
   <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icons/icon-180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
 
   <style>
     :root {
@@ -54,10 +56,22 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
 
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .mini-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+    }
+
     .title {
       font-size: 20px;
       font-weight: 900;
-      margin-bottom: 14px;
     }
 
     .total-label {
@@ -79,6 +93,10 @@
       gap: 10px;
     }
 
+    .top-buttons .wide {
+      grid-column: 1 / -1;
+    }
+
     button {
       border: none;
       border-radius: 14px;
@@ -91,6 +109,11 @@
     .copy-btn {
       background: var(--main);
       color: white;
+    }
+
+    .detail-btn {
+      background: #dbeafe;
+      color: #1d4ed8;
     }
 
     .clear-btn {
@@ -262,13 +285,17 @@
 <body>
   <div class="app">
     <section class="top-card">
-      <div class="title">トモさん請求計算表</div>
+      <div class="title-row">
+        <img class="mini-icon" src="./icons/icon-72.png" alt="">
+        <div class="title">トモさん請求計算表</div>
+      </div>
       <div class="total-label">今週合計</div>
       <div class="total" id="grandTotal">¥0</div>
 
       <div class="top-buttons">
-        <button class="copy-btn" onclick="copyTotal()">合計をコピー</button>
-        <button class="clear-btn" onclick="clearAll()">全てクリア</button>
+        <button class="copy-btn" onclick="copyAmountOnly()">合計コピー</button>
+        <button class="detail-btn" onclick="copyDetail()">詳細コピー</button>
+        <button class="clear-btn wide" onclick="clearAll()">全てクリア</button>
       </div>
     </section>
 
@@ -416,24 +443,21 @@
       document.getElementById("grandTotal").textContent = yen(grandTotal());
     }
 
-    function buildCopyText() {
+    function buildDetailText() {
       let text = "トモさん請求額\n\n";
 
       days.forEach(day => {
         const total = dayTotal(day.key);
-
         text += `${day.name}：${total.toLocaleString("ja-JP")}円\n`;
 
         products.forEach(product => {
           const count = state[day.key][product.key];
-
           if (count > 0) {
             text += `・${product.name} ${count}${product.unit}\n`;
           }
         });
 
         const other = Number(state[day.key].other || 0);
-
         if (other > 0) {
           text += `・その他 ${other.toLocaleString("ja-JP")}円\n`;
         }
@@ -442,16 +466,13 @@
       });
 
       text += `合計：${grandTotal().toLocaleString("ja-JP")}円`;
-
       return text;
     }
 
-    async function copyTotal() {
-      const text = buildCopyText();
-
+    async function writeClipboard(text, message) {
       try {
         await navigator.clipboard.writeText(text);
-        showToast("コピーしました");
+        showToast(message);
       } catch (e) {
         const textarea = document.createElement("textarea");
         textarea.value = text;
@@ -459,8 +480,16 @@
         textarea.select();
         document.execCommand("copy");
         textarea.remove();
-        showToast("コピーしました");
+        showToast(message);
       }
+    }
+
+    function copyAmountOnly() {
+      writeClipboard(String(grandTotal()), "合計金額だけコピーしました");
+    }
+
+    function copyDetail() {
+      writeClipboard(buildDetailText(), "詳細をコピーしました");
     }
 
     function clearAll() {
@@ -468,7 +497,6 @@
 
       days.forEach(day => {
         state[day.key].other = 0;
-
         products.forEach(product => {
           state[day.key][product.key] = 0;
         });
