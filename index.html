@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>トモさん請求計算表</title>
-
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="請求計算">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,511 +11,82 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icons/icon-180.png">
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
-
   <style>
-    :root {
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --main: #111827;
-      --accent: #2563eb;
-      --danger: #dc2626;
-      --soft: #f9fafb;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding-bottom: 30px;
-    }
-
-    .app {
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 14px;
-    }
-
-    .top-card {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: var(--card);
-      border-radius: 0 0 22px 22px;
-      margin: -14px -14px 16px;
-      padding: calc(env(safe-area-inset-top) + 18px) 18px 18px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    }
-
-    .title-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .mini-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-    }
-
-    .title {
-      font-size: 20px;
-      font-weight: 900;
-    }
-
-    .total-label {
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 800;
-    }
-
-    .total {
-      font-size: 44px;
-      line-height: 1.05;
-      font-weight: 900;
-      margin: 4px 0 14px;
-    }
-
-    .top-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .top-buttons .wide {
-      grid-column: 1 / -1;
-    }
-
-    button {
-      border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 900;
-      min-height: 48px;
-      cursor: pointer;
-    }
-
-    .copy-btn {
-      background: var(--main);
-      color: white;
-    }
-
-    .detail-btn {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    .clear-btn {
-      background: #fee2e2;
-      color: var(--danger);
-    }
-
-    .day-card {
-      background: var(--card);
-      border-radius: 22px;
-      margin-bottom: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      border: 1px solid var(--line);
-    }
-
-    .day-header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 18px;
-      background: var(--card);
-      color: var(--text);
-      text-align: left;
-      min-height: 74px;
-    }
-
-    .day-name {
-      font-size: 30px;
-      font-weight: 900;
-      letter-spacing: 0.03em;
-    }
-
-    .day-subtotal {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--accent);
-      margin-top: 3px;
-    }
-
-    .arrow {
-      font-size: 24px;
-      color: var(--muted);
-      transform: rotate(0deg);
-      transition: 0.2s;
-    }
-
-    .day-card.open .arrow {
-      transform: rotate(180deg);
-    }
-
-    .day-body {
-      display: none;
-      padding: 0 16px 18px;
-      border-top: 1px solid var(--line);
-      background: var(--soft);
-    }
-
-    .day-card.open .day-body {
-      display: block;
-    }
-
-    .item-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .item-name {
-      font-size: 17px;
-      font-weight: 900;
-    }
-
-    .item-price {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    .counter {
-      display: grid;
-      grid-template-columns: 48px 46px 48px;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .counter button {
-      min-height: 46px;
-      border-radius: 13px;
-      background: #e5e7eb;
-      color: var(--text);
-      font-size: 25px;
-      line-height: 1;
-    }
-
-    .count {
-      text-align: center;
-      font-size: 23px;
-      font-weight: 900;
-    }
-
-    .other-box {
-      padding-top: 16px;
-    }
-
-    .other-label {
-      font-size: 17px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .other-input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      min-height: 54px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 0 14px;
-      font-size: 23px;
-      font-weight: 900;
-      background: white;
-    }
-
-    .yen {
-      font-size: 18px;
-      font-weight: 900;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 22px;
-      transform: translateX(-50%);
-      background: rgba(17, 24, 39, 0.92);
-      color: white;
-      padding: 12px 18px;
-      border-radius: 999px;
-      font-weight: 900;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.25s;
-      z-index: 30;
-    }
-
-    .toast.show {
-      opacity: 1;
-      bottom: 34px;
-    }
-
-    .note {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 16px;
-      line-height: 1.6;
-    }
+    :root{--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--main:#111827;--accent:#2563eb;--danger:#dc2626;--soft:#f9fafb;--saved:#059669}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);padding-bottom:30px}
+    .app{max-width:560px;margin:0 auto;padding:14px}
+    .top-card{position:sticky;top:0;z-index:10;background:var(--card);border-radius:0 0 22px 22px;margin:-14px -14px 16px;padding:calc(env(safe-area-inset-top) + 18px) 18px 18px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+    .title{font-size:21px;font-weight:900;margin-bottom:14px;letter-spacing:.01em}
+    .total-label{font-size:14px;color:var(--muted);font-weight:800}
+    .total{font-size:44px;line-height:1.05;font-weight:900;margin:4px 0 8px}
+    .updated{min-height:20px;font-size:12px;color:var(--saved);font-weight:800;margin-bottom:14px}.updated.empty{color:var(--muted)}
+    .top-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.top-buttons .wide{grid-column:1/-1}
+    button{border:none;border-radius:14px;font-size:16px;font-weight:900;min-height:48px;cursor:pointer}
+    .copy-btn{background:var(--main);color:white}.detail-btn{background:#dbeafe;color:#1d4ed8}.clear-btn{background:#fee2e2;color:var(--danger)}
+    .day-card{background:var(--card);border-radius:22px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);border:1px solid var(--line)}
+    .day-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 18px;background:var(--card);color:var(--text);text-align:left;min-height:74px}
+    .day-name-wrap{display:flex;align-items:center;gap:9px}.day-status{width:22px;height:22px;border-radius:999px;border:2px solid #d1d5db;color:white;background:white;display:grid;place-items:center;font-size:14px;font-weight:900;flex:0 0 auto}.day-status.active{background:var(--saved);border-color:var(--saved)}
+    .day-name{font-size:30px;font-weight:900;letter-spacing:.03em}.day-subtotal{font-size:18px;font-weight:900;color:var(--accent);margin-top:3px}
+    .arrow{font-size:24px;color:var(--muted);transform:rotate(0deg);transition:.2s}.day-card.open .arrow{transform:rotate(180deg)}
+    .day-body{display:none;padding:0 16px 18px;border-top:1px solid var(--line);background:var(--soft)}.day-card.open .day-body{display:block}
+    .item-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+    .item-name{font-size:17px;font-weight:900}.item-price{font-size:13px;color:var(--muted);margin-top:2px}
+    .counter{display:grid;grid-template-columns:48px 46px 48px;align-items:center;gap:6px}.counter button{min-height:46px;border-radius:13px;background:#e5e7eb;color:var(--text);font-size:25px;line-height:1}.count{text-align:center;font-size:23px;font-weight:900}
+    .other-box{padding-top:16px}.other-label{font-size:17px;font-weight:900;margin-bottom:8px}.other-input-wrap{display:flex;align-items:center;gap:8px}
+    input[type=number]{width:100%;min-height:54px;border:1px solid var(--line);border-radius:14px;padding:0 14px;font-size:23px;font-weight:900;background:white}.yen{font-size:18px;font-weight:900}
+    .summary-card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px;margin-top:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}.summary-title{font-size:17px;font-weight:900;margin-bottom:10px}.summary-row{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:10px 0;font-weight:800}.summary-row:first-of-type{border-top:none}.summary-row span:last-child{color:var(--muted)}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(17,24,39,.92);color:white;padding:12px 18px;border-radius:999px;font-weight:900;opacity:0;pointer-events:none;transition:.25s;z-index:30;white-space:nowrap}.toast.show{opacity:1;bottom:34px}
+    .note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6}
   </style>
 </head>
-
 <body>
   <div class="app">
     <section class="top-card">
-      <div class="title-row">
-        <img class="mini-icon" src="./icons/icon-72.png" alt="">
-        <div class="title">トモさん請求計算表</div>
-      </div>
+      <div class="title">トモさん請求計算表</div>
       <div class="total-label">今週合計</div>
       <div class="total" id="grandTotal">¥0</div>
-
+      <div class="updated empty" id="lastUpdated">未入力</div>
       <div class="top-buttons">
         <button class="copy-btn" onclick="copyAmountOnly()">合計コピー</button>
         <button class="detail-btn" onclick="copyDetail()">詳細コピー</button>
         <button class="clear-btn wide" onclick="clearAll()">全てクリア</button>
       </div>
     </section>
-
     <div id="days"></div>
-
-    <div class="note">
-      保存なし。毎週使い終わったら「全てクリア」でリセット。
-    </div>
+    <div id="summary"></div>
+    <div class="note">入力内容は自動一時保存されます。新しい週は「全てクリア」でリセットしてください。</div>
   </div>
-
-  <div class="toast" id="toast">コピーしました</div>
-
+  <div class="toast" id="toast">保存しました</div>
   <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js");
-      });
-    }
-
-    const products = [
-      { key: "onigiri", name: "おにぎり", price: 250, unit: "個" },
-      { key: "bread", name: "パン", price: 250, unit: "個" },
-      { key: "hot", name: "ホットスナック", price: 300, unit: "個" },
-      { key: "monster", name: "モンスター", price: 350, unit: "本" },
-      { key: "tabaco", name: "タバコ", price: 620, unit: "箱" }
-    ];
-
-    const days = [
-      { key: "thu", name: "木曜日" },
-      { key: "fri", name: "金曜日" },
-      { key: "sat", name: "土曜日" },
-      { key: "sun", name: "日曜日" },
-      { key: "mon", name: "月曜日" }
-    ];
-
-    const state = {};
-
-    days.forEach(day => {
-      state[day.key] = { other: 0 };
-      products.forEach(product => {
-        state[day.key][product.key] = 0;
-      });
-    });
-
-    function yen(num) {
-      return "¥" + Number(num).toLocaleString("ja-JP");
-    }
-
-    function render() {
-      const wrap = document.getElementById("days");
-      wrap.innerHTML = "";
-
-      days.forEach((day, index) => {
-        const card = document.createElement("section");
-        card.className = "day-card" + (index === 0 ? " open" : "");
-        card.dataset.day = day.key;
-
-        const rows = products.map(product => `
-          <div class="item-row">
-            <div>
-              <div class="item-name">${product.name}</div>
-              <div class="item-price">${product.price.toLocaleString("ja-JP")}円 / ${product.unit}</div>
-            </div>
-
-            <div class="counter">
-              <button onclick="changeCount('${day.key}', '${product.key}', -1)">−</button>
-              <div class="count" id="${day.key}-${product.key}">${state[day.key][product.key]}</div>
-              <button onclick="changeCount('${day.key}', '${product.key}', 1)">＋</button>
-            </div>
-          </div>
-        `).join("");
-
-        card.innerHTML = `
-          <button class="day-header" onclick="toggleDay('${day.key}')">
-            <div>
-              <div class="day-name">${day.name}</div>
-              <div class="day-subtotal" id="${day.key}-subtotal">${yen(dayTotal(day.key))}</div>
-            </div>
-            <div class="arrow">⌄</div>
-          </button>
-
-          <div class="day-body">
-            ${rows}
-
-            <div class="other-box">
-              <div class="other-label">その他金額</div>
-              <div class="other-input-wrap">
-                <input
-                  type="number"
-                  inputmode="numeric"
-                  min="0"
-                  placeholder="0"
-                  value="${state[day.key].other || ""}"
-                  oninput="setOther('${day.key}', this.value)"
-                />
-                <span class="yen">円</span>
-              </div>
-            </div>
-          </div>
-        `;
-
-        wrap.appendChild(card);
-      });
-
-      updateTotals();
-    }
-
-    function toggleDay(dayKey) {
-      const card = document.querySelector(`[data-day="${dayKey}"]`);
-      card.classList.toggle("open");
-    }
-
-    function changeCount(dayKey, productKey, amount) {
-      const current = state[dayKey][productKey];
-      state[dayKey][productKey] = Math.max(0, current + amount);
-      document.getElementById(`${dayKey}-${productKey}`).textContent = state[dayKey][productKey];
-      updateTotals();
-    }
-
-    function setOther(dayKey, value) {
-      state[dayKey].other = Math.max(0, Number(value || 0));
-      updateTotals();
-    }
-
-    function dayTotal(dayKey) {
-      let total = Number(state[dayKey].other || 0);
-
-      products.forEach(product => {
-        total += state[dayKey][product.key] * product.price;
-      });
-
-      return total;
-    }
-
-    function grandTotal() {
-      return days.reduce((sum, day) => sum + dayTotal(day.key), 0);
-    }
-
-    function updateTotals() {
-      days.forEach(day => {
-        const subtotal = document.getElementById(`${day.key}-subtotal`);
-        if (subtotal) subtotal.textContent = yen(dayTotal(day.key));
-      });
-
-      document.getElementById("grandTotal").textContent = yen(grandTotal());
-    }
-
-    function buildDetailText() {
-      let text = "トモさん請求額\n\n";
-
-      days.forEach(day => {
-        const total = dayTotal(day.key);
-        text += `${day.name}：${total.toLocaleString("ja-JP")}円\n`;
-
-        products.forEach(product => {
-          const count = state[day.key][product.key];
-          if (count > 0) {
-            text += `・${product.name} ${count}${product.unit}\n`;
-          }
-        });
-
-        const other = Number(state[day.key].other || 0);
-        if (other > 0) {
-          text += `・その他 ${other.toLocaleString("ja-JP")}円\n`;
-        }
-
-        text += "\n";
-      });
-
-      text += `合計：${grandTotal().toLocaleString("ja-JP")}円`;
-      return text;
-    }
-
-    async function writeClipboard(text, message) {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast(message);
-      } catch (e) {
-        const textarea = document.createElement("textarea");
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand("copy");
-        textarea.remove();
-        showToast(message);
-      }
-    }
-
-    function copyAmountOnly() {
-      writeClipboard(String(grandTotal()), "合計金額だけコピーしました");
-    }
-
-    function copyDetail() {
-      writeClipboard(buildDetailText(), "詳細をコピーしました");
-    }
-
-    function clearAll() {
-      if (!confirm("全てクリアしますか？")) return;
-
-      days.forEach(day => {
-        state[day.key].other = 0;
-        products.forEach(product => {
-          state[day.key][product.key] = 0;
-        });
-      });
-
-      render();
-      showToast("クリアしました");
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.add("show");
-
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 1600);
-    }
-
-    render();
+    if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./service-worker.js")})}
+    const STORAGE_KEY="tomoBillingPwaV4";
+    const products=[{key:"onigiri",name:"おにぎり",price:250,unit:"個"},{key:"bread",name:"パン",price:250,unit:"個"},{key:"hot",name:"ホットスナック",price:300,unit:"個"},{key:"monster",name:"モンスター",price:350,unit:"本"},{key:"tabaco",name:"タバコ",price:620,unit:"箱"}];
+    const days=[{key:"thu",name:"木曜日"},{key:"fri",name:"金曜日"},{key:"sat",name:"土曜日"},{key:"sun",name:"日曜日"},{key:"mon",name:"月曜日"}];
+    let state=makeInitialState();
+    function makeInitialState(){const initial={lastUpdated:null,days:{}};days.forEach(day=>{initial.days[day.key]={other:0};products.forEach(product=>{initial.days[day.key][product.key]=0})});return initial}
+    function normalizeState(saved){const initial=makeInitialState();if(!saved||typeof saved!=="object")return initial;initial.lastUpdated=saved.lastUpdated||null;days.forEach(day=>{if(saved.days&&saved.days[day.key]){initial.days[day.key].other=Number(saved.days[day.key].other||0);products.forEach(product=>{initial.days[day.key][product.key]=Number(saved.days[day.key][product.key]||0)})}});return initial}
+    function loadState(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)state=normalizeState(JSON.parse(raw))}catch(e){state=makeInitialState()}}
+    function saveState(){state.lastUpdated=new Date().toISOString();localStorage.setItem(STORAGE_KEY,JSON.stringify(state));updateLastUpdated()}
+    function yen(num){return "¥"+Number(num).toLocaleString("ja-JP")}
+    function formatDateTime(iso){if(!iso)return"未入力";const d=new Date(iso);const yyyy=d.getFullYear();const mm=String(d.getMonth()+1).padStart(2,"0");const dd=String(d.getDate()).padStart(2,"0");const hh=String(d.getHours()).padStart(2,"0");const mi=String(d.getMinutes()).padStart(2,"0");return `最終更新 ${yyyy}/${mm}/${dd} ${hh}:${mi}`}
+    function render(){const wrap=document.getElementById("days");wrap.innerHTML="";days.forEach((day,index)=>{const card=document.createElement("section");card.className="day-card"+(index===0?" open":"");card.dataset.day=day.key;const rows=products.map(product=>`<div class="item-row"><div><div class="item-name">${product.name}</div><div class="item-price">${product.price.toLocaleString("ja-JP")}円 / ${product.unit}</div></div><div class="counter"><button onclick="changeCount('${day.key}','${product.key}',-1)">−</button><div class="count" id="${day.key}-${product.key}">${state.days[day.key][product.key]}</div><button onclick="changeCount('${day.key}','${product.key}',1)">＋</button></div></div>`).join("");card.innerHTML=`<button class="day-header" onclick="toggleDay('${day.key}')"><div><div class="day-name-wrap"><div class="day-status" id="${day.key}-status">✓</div><div class="day-name">${day.name}</div></div><div class="day-subtotal" id="${day.key}-subtotal">${yen(dayTotal(day.key))}</div></div><div class="arrow">⌄</div></button><div class="day-body">${rows}<div class="other-box"><div class="other-label">その他金額</div><div class="other-input-wrap"><input type="number" inputmode="numeric" min="0" placeholder="0" value="${state.days[day.key].other||""}" oninput="setOther('${day.key}',this.value)" /><span class="yen">円</span></div></div></div>`;wrap.appendChild(card)});updateTotals();updateLastUpdated()}
+    function renderSummary(){const wrap=document.getElementById("summary");let rows="";products.forEach(product=>{const totalCount=days.reduce((sum,day)=>sum+state.days[day.key][product.key],0);rows+=`<div class="summary-row"><span>${product.name}</span><span>${totalCount}${product.unit}</span></div>`});const otherTotal=days.reduce((sum,day)=>sum+Number(state.days[day.key].other||0),0);rows+=`<div class="summary-row"><span>その他合計</span><span>${otherTotal.toLocaleString("ja-JP")}円</span></div>`;wrap.innerHTML=`<section class="summary-card"><div class="summary-title">商品ごとの合計</div>${rows}</section>`}
+    function updateLastUpdated(){const el=document.getElementById("lastUpdated");el.textContent=formatDateTime(state.lastUpdated);el.classList.toggle("empty",!state.lastUpdated)}
+    function toggleDay(dayKey){document.querySelector(`[data-day="${dayKey}"]`).classList.toggle("open")}
+    function changeCount(dayKey,productKey,amount){const current=state.days[dayKey][productKey];state.days[dayKey][productKey]=Math.max(0,current+amount);document.getElementById(`${dayKey}-${productKey}`).textContent=state.days[dayKey][productKey];updateTotals();saveState()}
+    function setOther(dayKey,value){state.days[dayKey].other=Math.max(0,Number(value||0));updateTotals();saveState()}
+    function dayHasInput(dayKey){if(Number(state.days[dayKey].other||0)>0)return true;return products.some(product=>state.days[dayKey][product.key]>0)}
+    function dayTotal(dayKey){let total=Number(state.days[dayKey].other||0);products.forEach(product=>{total+=state.days[dayKey][product.key]*product.price});return total}
+    function grandTotal(){return days.reduce((sum,day)=>sum+dayTotal(day.key),0)}
+    function updateTotals(){days.forEach(day=>{const subtotal=document.getElementById(`${day.key}-subtotal`);const status=document.getElementById(`${day.key}-status`);if(subtotal)subtotal.textContent=yen(dayTotal(day.key));if(status)status.classList.toggle("active",dayHasInput(day.key))});document.getElementById("grandTotal").textContent=yen(grandTotal());renderSummary()}
+    function buildDetailText(){let text="トモさん請求額\n\n";days.forEach(day=>{const total=dayTotal(day.key);text+=`${day.name}：${total.toLocaleString("ja-JP")}円\n`;products.forEach(product=>{const count=state.days[day.key][product.key];if(count>0)text+=`・${product.name} ${count}${product.unit}\n`});const other=Number(state.days[day.key].other||0);if(other>0)text+=`・その他 ${other.toLocaleString("ja-JP")}円\n`;text+="\n"});text+=`合計：${grandTotal().toLocaleString("ja-JP")}円`;return text}
+    async function writeClipboard(text,message){try{await navigator.clipboard.writeText(text);showToast(message)}catch(e){const textarea=document.createElement("textarea");textarea.value=text;document.body.appendChild(textarea);textarea.select();document.execCommand("copy");textarea.remove();showToast(message)}}
+    function copyAmountOnly(){writeClipboard(String(grandTotal()),"合計金額だけコピーしました")}
+    function copyDetail(){writeClipboard(buildDetailText(),"詳細をコピーしました")}
+    function clearAll(){if(!confirm("全てクリアしますか？"))return;state=makeInitialState();localStorage.removeItem(STORAGE_KEY);render();showToast("クリアしました")}
+    function showToast(message){const toast=document.getElementById("toast");toast.textContent=message;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600)}
+    loadState();render();
   </script>
 </body>
 </html>
